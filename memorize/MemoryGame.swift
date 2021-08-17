@@ -21,15 +21,18 @@ struct MemoryGame<CardContent> {
         // add number of paris of cards x 2 to cards array
         for pairIndex in 0..<numberOfPairOfCards {
             let content = createCardContent(pairIndex)
-            cards.append(Card(content: content))
+            cards.append(Card(content: content, id: pairIndex*2))
+            cards.append(Card(content: content, id: pairIndex*2+1))
         }
     }
 
     // namespace the Card
-    struct Card {
-        var isFaceUp: Bool = false
+    struct Card: Identifiable {
+        
+        var isFaceUp: Bool = true
         var isMatched: Bool = false
         var content: CardContent
+        var id: Int
         
     }
 
