@@ -7,13 +7,27 @@
 
 import Foundation
 
+// This is the Model
 struct MemoryGame<CardContent> {
     
     // can look at it but can't modify
     private(set) var cards: Array<Card>
     
-    func choose(_ : Card) {
-        
+    mutating func choose(_ card: Card) {
+        let chosenIndex = index(of: card)
+        cards[chosenIndex].isFaceUp.toggle()
+        print("chosen card: \(card)")
+        print("cards: \(cards)")
+    }
+    
+    func index(of card: Card) -> Int {
+        for index in 0..<cards.count {
+            if cards[index].id == card.id {
+                return index
+            }
+        }
+        // chosen card was not found in array. NOT Possible.
+        return -1
     }
     
     init(numberOfPairOfCards: Int, createCardContent: (Int) -> CardContent) {

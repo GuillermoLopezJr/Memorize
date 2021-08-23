@@ -10,10 +10,10 @@ import SwiftUI
 // itermediary between model and view
 // job is to protect the model
 // only the view model can change the model
-class EmojiMemoryGame {
+// Observable objects can publish to the world that something changed
+class EmojiMemoryGame: ObservableObject {
     
-    static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎", "🍐", "🍋",
-                  "🍌", "🍉", "🍇", "🫐", "🍈", "🍒", "🍑", "🥭"]
+    static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎", "🍐", "🍋","🍌", "🍉", "🍇", "🫐", "🍈", "🍒", "🍑", "🥭"]
     
     static func createMemoryGame() -> MemoryGame<String> {
         MemoryGame<String>(numberOfPairOfCards: 4) { pairIndex in
@@ -22,11 +22,17 @@ class EmojiMemoryGame {
     }
     
     // if this was not private view could change model directly
-    private var model: MemoryGame<String> = createMemoryGame()
+    // anything model changes it will auto call objectWillSend.send()
+    @Published private var model: MemoryGame<String> = createMemoryGame()
     
     var cards: Array<MemoryGame<String>.Card> {
         return model.cards
     }
     
+    // MARK: Intent(s)
+    
+    func choose(_ card: MemoryGame<String>.Card) {
+        model.choose(card)
+    }
     
 }
