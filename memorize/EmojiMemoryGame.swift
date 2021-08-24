@@ -7,13 +7,16 @@
 
 import SwiftUI
 
-// itermediary between model and view
+// ViewModel - itermediary between model and view
 // job is to protect the model
 // only the view model can change the model
 // Observable objects can publish to the world that something changed
 class EmojiMemoryGame: ObservableObject {
     
-    static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎", "🍐", "🍋","🍌", "🍉", "🍇", "🫐", "🍈", "🍒", "🍑", "🥭"]
+    static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎",
+                         "🍐", "🍋","🍌", "🍉", "🍇", "🫐", "🍈", "🍒",
+                         "🍑", "🥭",
+                         "🐶", "🐱", "🐭", "🐹", "🐰"]
     
     static func createMemoryGame() -> MemoryGame<String> {
         MemoryGame<String>(numberOfPairOfCards: 4) { pairIndex in

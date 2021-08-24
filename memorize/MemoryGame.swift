@@ -8,26 +8,39 @@
 import Foundation
 
 // This is the Model
-struct MemoryGame<CardContent> {
+struct MemoryGame<CardContent> where CardContent: Equatable {
     
     // can look at it but can't modify
     private(set) var cards: Array<Card>
     
-    mutating func choose(_ card: Card) {
-        let chosenIndex = index(of: card)
-        cards[chosenIndex].isFaceUp.toggle()
-        print("chosen card: \(card)")
-        print("cards: \(cards)")
-    }
+    private var indexOfTheOneAndOnlyOneFaceUpCard: Int?
     
-    func index(of card: Card) -> Int {
-        for index in 0..<cards.count {
-            if cards[index].id == card.id {
-                return index
+    mutating func choose(_ card: Card) {
+        if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}),
+           !cards[chosenIndex].isFaceUp,
+           !cards[chosenIndex].isMatched
+        {
+            // if there is already a face up card, check to see if the next card matches.
+            // if so designate both cards as a match
+            // if no match flip both cards down
+            if let potentialMatchIndex = indexOfTheOneAndOnlyOneFaceUpCard {
+                if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    cards[chosenIndex].isMatched = true
+                    cards[potentialMatchIndex].isMatched = true
+                }
+                // both cards are face up, so set index of first face up card to be nil
+                indexOfTheOneAndOnlyOneFaceUpCard = nil
+            } else {
+                // turn all cards face down
+                for index in cards.indices {
+                    cards[index].isFaceUp = false
+                }
+                indexOfTheOneAndOnlyOneFaceUpCard  = chosenIndex
             }
+            
+            cards[chosenIndex].isFaceUp.toggle()
         }
-        // chosen card was not found in array. NOT Possible.
-        return -1
+        print("cards: \(cards)")
     }
     
     init(numberOfPairOfCards: Int, createCardContent: (Int) -> CardContent) {
@@ -42,13 +55,10 @@ struct MemoryGame<CardContent> {
 
     // namespace the Card
     struct Card: Identifiable {
-        
-        var isFaceUp: Bool = true
+        var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent
         var id: Int
         
     }
-
 }
-
