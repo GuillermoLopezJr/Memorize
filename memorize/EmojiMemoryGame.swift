@@ -13,12 +13,14 @@ import SwiftUI
 // Observable objects can publish to the world that something changed
 class EmojiMemoryGame: ObservableObject {
     
-    static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎",
+    typealias Card = MemoryGame<String>.Card
+    
+    private static let emojis = ["🍺", "🍙", "🍰", "🥜", "🍭", "🍓", "🍏", "🍎",
                          "🍐", "🍋","🍌", "🍉", "🍇", "🫐", "🍈", "🍒",
                          "🍑", "🥭",
                          "🐶", "🐱", "🐭", "🐹", "🐰"]
     
-    static func createMemoryGame() -> MemoryGame<String> {
+    private static func createMemoryGame() -> MemoryGame<String> {
         MemoryGame<String>(numberOfPairOfCards: 4) { pairIndex in
            emojis[pairIndex]
         }
@@ -28,13 +30,13 @@ class EmojiMemoryGame: ObservableObject {
     // anything model changes it will auto call objectWillSend.send()
     @Published private var model: MemoryGame<String> = createMemoryGame()
     
-    var cards: Array<MemoryGame<String>.Card> {
+    var cards: Array<Card> {
         return model.cards
     }
     
     // MARK: Intent(s)
     
-    func choose(_ card: MemoryGame<String>.Card) {
+    func choose(_ card: Card) {
         model.choose(card)
     }
     

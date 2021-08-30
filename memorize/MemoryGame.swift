@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // This is the Model
 struct MemoryGame<CardContent> where CardContent: Equatable {
@@ -13,7 +14,10 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     // can look at it but can't modify
     private(set) var cards: Array<Card>
     
-    private var indexOfTheOneAndOnlyOneFaceUpCard: Int?
+    private var indexOfTheOneAndOnlyOneFaceUpCard: Int? {
+        get { return cards.indices.filter({ cards[$0].isFaceUp}).oneAndOnly }
+        set { cards.indices.forEach({cards[$0].isFaceUp = ($0 == newValue)}) }
+    }
     
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}),
@@ -29,22 +33,16 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     cards[potentialMatchIndex].isMatched = true
                 }
                 // both cards are face up, so set index of first face up card to be nil
-                indexOfTheOneAndOnlyOneFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             } else {
                 // turn all cards face down
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
-                indexOfTheOneAndOnlyOneFaceUpCard  = chosenIndex
+                indexOfTheOneAndOnlyOneFaceUpCard = chosenIndex
             }
-            
-            cards[chosenIndex].isFaceUp.toggle()
         }
-        print("cards: \(cards)")
     }
     
     init(numberOfPairOfCards: Int, createCardContent: (Int) -> CardContent) {
-        cards = Array<Card>()
+        cards = []
         // add number of paris of cards x 2 to cards array
         for pairIndex in 0..<numberOfPairOfCards {
             let content = createCardContent(pairIndex)
@@ -55,10 +53,26 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
 
     // namespace the Card
     struct Card: Identifiable {
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
-        var content: CardContent
-        var id: Int
-        
+        var isFaceUp = false
+        var isMatched = false
+        let content: CardContent
+        let id: Int
+    }
+}
+
+extension Array {
+    var oneAndOnly: Element? {
+        if count == 1 {
+            return first
+        }
+        else {
+            return nil;
+        }
+    }
+}
+
+struct MemoryGame_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }
